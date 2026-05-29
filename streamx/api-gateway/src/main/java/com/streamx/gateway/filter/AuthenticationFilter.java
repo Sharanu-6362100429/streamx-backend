@@ -1,5 +1,6 @@
 package com.streamx.gateway.filter;
 
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -19,7 +20,6 @@ import java.util.List;
 @Component
 public class AuthenticationFilter extends AbstractGatewayFilterFactory<AuthenticationFilter.Config> {
 
-    // Public endpoints that don't need a JWT
     private static final List<String> PUBLIC_PATHS = List.of(
             "/api/v1/auth/login",
             "/api/v1/auth/register",
@@ -55,7 +55,6 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
             try {
                 Claims claims = validateToken(token);
 
-                // Forward user info to downstream services as headers
                 ServerWebExchange mutatedExchange = exchange.mutate()
                         .request(r -> r
                                 .header("X-User-Id", claims.getSubject())
@@ -91,7 +90,5 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
         return exchange.getResponse().setComplete();
     }
 
-    public static class Config {
-        // Config fields if needed in future
-    }
+    public static class Config {}
 }

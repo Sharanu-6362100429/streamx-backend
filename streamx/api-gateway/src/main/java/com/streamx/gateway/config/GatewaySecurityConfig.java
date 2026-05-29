@@ -1,4 +1,5 @@
-package com.streamx.gateway.filter.conf;
+package com.streamx.gateway.config;
+
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
