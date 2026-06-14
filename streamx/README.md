@@ -4,7 +4,7 @@
 
 ## Architecture
 
-```
+``` 
 Client → API Gateway (8080) → [Service Registry (Eureka)]
                              ↓
          ┌───────────────────────────────────┐
