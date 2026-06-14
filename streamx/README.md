@@ -1,4 +1,4 @@
-# StreamX — Distributed Streaming Backend
+ # StreamX — Distributed Streaming Backend
 
 > A Netflix-inspired distributed backend built with Spring Boot microservices, Kafka, Redis, and Docker.
 
