@@ -42,10 +42,13 @@ public class StreamController {
     @Operation(summary = "Stream video with byte-range support")
     public ResponseEntity<InputStreamResource> stream(
             @PathVariable String key,
-            @RequestHeader(value = "Range", required = false) String rangeHeader) {
+            @RequestHeader(value = "Range", required = false) String rangeHeader,
+            @RequestHeader("X-User-Id") String userId) {
 
         StatObjectResponse info = streamService.getVideoInfo(key);
         long fileSize = info.size();
+
+        streamService.publishWatchedEvent(userId, key);
 
         if (rangeHeader == null) {
             InputStream stream = streamService.getVideoStream(key);

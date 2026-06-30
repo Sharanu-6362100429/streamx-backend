@@ -1,18 +1,19 @@
 package com.streamx.stream.service;
-import java.util.Map;
 
-import com.streamx.stream.controller.CatalogClient;
+import com.streamx.stream.client.CatalogClientFallback;
+import com.streamx.stream.model.WatchedEvent;
 import io.minio.*;
 import io.minio.http.Method;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
+import java.util.Map;
 import java.util.UUID;
-
 
 @Service
 @RequiredArgsConstructor
@@ -20,17 +21,16 @@ import java.util.UUID;
 public class StreamService {
 
     private final MinioClient minioClient;
+    private final CatalogClientFallback catalogClient;
+    private final KafkaTemplate<String, WatchedEvent> kafkaTemplate;
 
     @Value("${minio.bucket}")
     private String bucket;
 
-    // Add field
-    private final CatalogClient catalogClient;
-
-    // Add method
     public Map<String, Object> verifyMovie(String movieId) {
         return catalogClient.getMovie(movieId);
     }
+
     public String uploadVideo(MultipartFile file) {
         try {
             String key = UUID.randomUUID() + "-" + file.getOriginalFilename();
@@ -108,5 +108,16 @@ public class StreamService {
         } catch (Exception e) {
             throw new RuntimeException("Failed to stream range: " + e.getMessage());
         }
+    }
+
+    public void publishWatchedEvent(String userId, String videoKey) {
+        WatchedEvent event = WatchedEvent.builder()
+                .userId(userId)
+                .videoKey(videoKey)
+                .watchedAt(System.currentTimeMillis())
+                .build();
+
+        kafkaTemplate.send("user.watched", event);
+        log.info("Published user.watched event: {}", event);
     }
 }

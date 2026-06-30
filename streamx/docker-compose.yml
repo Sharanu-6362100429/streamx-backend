@@ -103,7 +103,6 @@ services:
       MINIO_ROOT_PASSWORD: streamx123
     volumes:
       - minio_data:/data
-      - 
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       interval: 10s
